@@ -12,6 +12,7 @@ public class EnemyAI : MonoBehaviour
     }
 
     public Transform player;
+    public LayerMask obstacleLayer;
     public float normalSpeed = 2f;
     public float alertSpeed = 4f;
     public float chaseSpeed = 6f;
@@ -19,13 +20,12 @@ public class EnemyAI : MonoBehaviour
     public float patrolRange = 20f;
     public float playerChaseTime = 5f;
     public State currentState = State.Patrolling;
-    
+
     private NavMeshAgent navMeshAgent;
     private bool playerIsLoud = false;
     private float chaseTimer = 0f;
     private Vector3 lastNoisePosition;
     private Vector3 lastPatrolPosition;
-
 
     void Start()
     {
@@ -59,7 +59,7 @@ public class EnemyAI : MonoBehaviour
                 chaseTimer = 0f;
             }
         }
-        else if (Vector3.Distance(transform.position, player.position) < detectionRadius)
+        else if (Vector3.Distance(transform.position, player.position) < detectionRadius && HasLineOfSight())
         {
             currentState = State.Chasing;
         }
@@ -135,6 +135,16 @@ public class EnemyAI : MonoBehaviour
         }
 
         navMeshAgent.isStopped = false;
+    }
+
+    private bool HasLineOfSight()
+    {
+        Vector3 directionToPlayer = player.position - transform.position;
+        if (Physics.Linecast(transform.position, player.position, out RaycastHit hit, obstacleLayer))
+        {
+            return hit.transform == player;
+        }
+        return true;
     }
 
     private void OnDrawGizmosSelected()
