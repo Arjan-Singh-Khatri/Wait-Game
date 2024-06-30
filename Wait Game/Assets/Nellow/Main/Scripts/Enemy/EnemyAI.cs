@@ -8,7 +8,8 @@ public class EnemyAI : MonoBehaviour
     {
         Patrolling,
         Alerted,
-        Chasing
+        Chasing,
+        Looking
     }
 
     public Transform player;
@@ -19,11 +20,13 @@ public class EnemyAI : MonoBehaviour
     public float detectionRadius = 10f;
     public float patrolRange = 20f;
     public float playerChaseTime = 5f;
+    public float alertDuration = 3f;
     public State currentState = State.Patrolling;
-
+    public EnemyAnimation enemyAnimation;
     private NavMeshAgent navMeshAgent;
     private bool playerIsLoud = false;
     private float chaseTimer = 0f;
+    private float alertTimer = 0f;
     private Vector3 lastNoisePosition;
     private Vector3 lastPatrolPosition;
 
@@ -35,33 +38,63 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
-        switch (currentState)
-        {
-            case State.Patrolling:
-                Patrol();
-                break;
-
-            case State.Alerted:
-                MoveToNoisePosition();
-                break;
-
-            case State.Chasing:
-                ChasePlayer();
-                break;
-        }
+        HandleState();
 
         if (currentState == State.Chasing)
         {
             chaseTimer += Time.deltaTime;
             if (chaseTimer > playerChaseTime || Vector3.Distance(transform.position, player.position) > detectionRadius * 1.5f)
             {
-                currentState = State.Patrolling;
+                TransitionToState(State.Patrolling);
                 chaseTimer = 0f;
+                MoveToRandomPosition();
             }
         }
         else if (Vector3.Distance(transform.position, player.position) < detectionRadius && HasLineOfSight())
         {
-            currentState = State.Chasing;
+            TransitionToState(State.Chasing);
+        }
+    }
+
+    private void HandleState()
+    {
+        switch (currentState)
+        {
+            case State.Patrolling:
+                Patrol();
+                break;
+            case State.Alerted:
+                Alert();
+                break;
+            case State.Chasing:
+                ChasePlayer();
+                break;
+            case State.Looking:
+                enemyAnimation.UpdateAnimationState(0);
+                break;
+        }
+    }
+
+    private void TransitionToState(State newState)
+    {
+        if (newState == State.Chasing || currentState != State.Chasing)
+        {
+            currentState = newState;
+        }
+        else if (newState == State.Alerted && currentState != State.Chasing && currentState != State.Alerted)
+        {
+            currentState = newState;
+        }
+        else if (newState == State.Patrolling && currentState == State.Looking)
+        {
+            currentState = newState;
+        }
+
+        if (currentState == State.Looking)
+        {
+            StopCoroutine(LookAround());
+            enemyAnimation.PlayLookAroundAnimation(false);
+            navMeshAgent.isStopped = false;
         }
     }
 
@@ -71,29 +104,33 @@ public class EnemyAI : MonoBehaviour
         if (isLoud)
         {
             lastNoisePosition = player.position;
-            currentState = State.Alerted;
+            TransitionToState(State.Alerted);
+            alertTimer = 0f;
         }
     }
 
     private void Patrol()
     {
         navMeshAgent.speed = normalSpeed;
+        enemyAnimation.UpdateAnimationState(navMeshAgent.velocity.magnitude);
+
         if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance < 0.5f)
         {
             StartCoroutine(LookAround());
-            MoveToRandomPosition();
         }
     }
 
-    private void MoveToNoisePosition()
+    private void Alert()
     {
         navMeshAgent.speed = alertSpeed;
+        enemyAnimation.UpdateAnimationState(navMeshAgent.velocity.magnitude);
         navMeshAgent.SetDestination(lastNoisePosition);
 
-        if (Vector3.Distance(transform.position, lastNoisePosition) < 1f)
+        alertTimer += Time.deltaTime;
+        if (alertTimer >= alertDuration || navMeshAgent.remainingDistance <= 0)
         {
-            playerIsLoud = false;
-            currentState = State.Patrolling;
+            TransitionToState(State.Patrolling);
+            MoveToRandomPosition();
         }
     }
 
@@ -101,6 +138,7 @@ public class EnemyAI : MonoBehaviour
     {
         navMeshAgent.speed = chaseSpeed;
         navMeshAgent.SetDestination(player.position);
+        enemyAnimation.UpdateAnimationState(navMeshAgent.velocity.magnitude);
     }
 
     private void MoveToRandomPosition()
@@ -122,19 +160,38 @@ public class EnemyAI : MonoBehaviour
 
     private IEnumerator LookAround()
     {
+        currentState = State.Looking;
         navMeshAgent.isStopped = true;
 
         float lookDuration = 3f;
         float lookTimer = 0f;
+        enemyAnimation.PlayLookAroundAnimation(true);
 
         while (lookTimer < lookDuration)
         {
-            transform.Rotate(Vector3.up, 120 * Time.deltaTime);
+            if (currentState != State.Looking)
+            {
+                enemyAnimation.PlayLookAroundAnimation(false);
+                navMeshAgent.isStopped = false;
+                yield break;
+            }
+
+            if (Vector3.Distance(transform.position, player.position) < detectionRadius && HasLineOfSight())
+            {
+                TransitionToState(State.Chasing);
+                navMeshAgent.isStopped = false;
+                enemyAnimation.PlayLookAroundAnimation(false);
+                yield break;
+            }
+
             lookTimer += Time.deltaTime;
             yield return null;
         }
 
+        enemyAnimation.PlayLookAroundAnimation(false);
         navMeshAgent.isStopped = false;
+        TransitionToState(State.Patrolling);
+        MoveToRandomPosition();
     }
 
     private bool HasLineOfSight()
