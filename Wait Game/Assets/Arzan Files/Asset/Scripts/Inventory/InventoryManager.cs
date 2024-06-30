@@ -117,7 +117,13 @@ public class InventoryManager : MonoBehaviour {
     public void ItemDrag(RectTransform item) {
 
         item.anchoredPosition = currentPointerWorldPos;
-        // Clamp this
+        item.anchoredPosition = new Vector2( 
+            Mathf.Clamp(item.anchoredPosition.x, _inventoryVisualOrigin.x + item.rect.width/2 ,
+                _inventoryVisualOrigin.x + _inventoryVisualFront.rect.width - item.rect.width / 2),
+
+            Mathf.Clamp(item.anchoredPosition.y, _inventoryVisualOrigin.y - _inventoryVisualFront.rect.height + item.rect.height / 2,
+                _inventoryVisualOrigin.y - item.rect.height / 2) );
+
     }
 
     #endregion
@@ -136,7 +142,7 @@ public class InventoryManager : MonoBehaviour {
             inventoryGrid.RemovePositionFromSet(pos);
         }
 
-        Destroy(item);
+        Destroy(item.gameObject);
     }
 
 }

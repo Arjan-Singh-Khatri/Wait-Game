@@ -57,6 +57,7 @@ public class ItemHandle : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
     {
         inventoryUi.currentItemType = ItemTypes.none;
         inventoryManager.DiscardItem(gameObject.GetComponent<RectTransform>(), itemScriptableObject._sizeX, itemScriptableObject._sizeY);
+        inventoryUi.HideItemDetail();
     }
 
     private void OnDisable()

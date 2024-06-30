@@ -49,10 +49,12 @@ public class InventoryUI : MonoBehaviour
         });
 
         useItemButton.onClick.AddListener(() => {
+            Debug.Log("Use");
             UseItem();
         });
 
-        discardItemButton.onClick.AddListener(() => { 
+        discardItemButton.onClick.AddListener(() => {
+            Debug.Log("Discard");
             DiscardItem();
         });
     
@@ -74,13 +76,19 @@ public class InventoryUI : MonoBehaviour
         {
             item.gameObject.SetActive(isInventoryOpen);
         }
-        HideItemDetail() ;
+
+        if(isInventoryOpen)
+            HideItemDetail();
     }
 
     public void ShowItemDetail(string itemDescripText, string itemName, ItemHandle item, Image itemImage) {
 
         detailPanelItemImage.sprite = itemImage.sprite;
+
         itemDetailPanel.SetActive(true);
+        useItemButton.gameObject.SetActive(true);
+        discardItemButton.gameObject.SetActive(true);
+        
         itemDescriptionText.text = itemDescripText;
         itemNameText.text = itemName;
         currentItem = item; 
@@ -88,10 +96,9 @@ public class InventoryUI : MonoBehaviour
 
     public void HideItemDetail(){
 
-        if (!inventoryPanel.activeSelf)
-        {
-            itemDetailPanel.SetActive(false);
-        }
+        itemDetailPanel.SetActive(false);
+        useItemButton.gameObject.SetActive(false);
+        discardItemButton.gameObject.SetActive(false);
     }
 
     public void UseItem(){
