@@ -16,8 +16,8 @@ MonoBehaviour:
     type: 3}
   _sizeX: 1
   _sizeY: 1
-  _name: Key
+  _name: Object_2
   _description: Key to some room.
-  ID: Test
+  itemCode: 
   itemInteractText: E- Pick Up
   itemType: 1

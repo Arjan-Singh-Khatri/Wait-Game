@@ -19,6 +19,10 @@ public class ItemHandle : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         inventoryManager = FindFirstObjectByType<InventoryManager>();
     }
 
+    private void Start()
+    {
+        inventoryUi.onDiscardItem += DiscardItem;
+    }
 
     #region Drag and Drop   
     public void OnBeginDrag(PointerEventData eventData){
@@ -53,7 +57,6 @@ public class ItemHandle : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
     {
         inventoryUi.currentItemType = ItemTypes.none;
         inventoryManager.DiscardItem(gameObject.GetComponent<RectTransform>(), itemScriptableObject._sizeX, itemScriptableObject._sizeY);
-        Destroy(gameObject);
     }
 
     private void OnDisable()

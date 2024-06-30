@@ -28,7 +28,6 @@ public class KeyInteractable : MonoBehaviour, IInteractable
     public void LoadItem(){
         InventoryManager inventoryManager = FindObjectOfType<InventoryManager>();
         inventoryManager.LoadItem(itemScriptableObject.itemVisualPrefab.rectTransform, itemScriptableObject._sizeX, itemScriptableObject._sizeY);
-
         Destroy(gameObject);
     }
 }

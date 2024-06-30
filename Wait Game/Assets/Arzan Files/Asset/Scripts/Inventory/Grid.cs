@@ -1,13 +1,6 @@
 
-using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Drawing;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEngine.UI.Image;
 
 
 public class Grid
@@ -18,7 +11,7 @@ public class Grid
     private readonly Vector2 _origin;
 
     private readonly Dictionary<(int, int), Vector2> coordinatePositionMapping;
-    private HashSet<Vector2> unavailableCoordinates;
+    public HashSet<Vector2> unavailableCoordinates;
 
     public Grid(int _rowSize, int _columnSize, int _cellSize, Vector2 _origin)
     {
@@ -39,59 +32,59 @@ public class Grid
 
                 var posVector = new Vector2(_origin.x + (i * _cellSize) + (_cellSize / 2),
                     _origin.y - (j * _cellSize) - (_cellSize / 2));
-
                 coordinatePositionMapping.Add((i, j), posVector);
             }
         }
     }
 
-    public Vector2[] GetPosArrayUnderItem(float minX, float minY, float maxX, float maxY, int size)
+    public List<Vector2> GetPosArrayUnderItem(float minX, float minY, float maxX, float maxY)
     {
-
-        int index = -1;
-
-        Vector2[] positionArray = new Vector2[size];
+        List<Vector2> posList = new();
 
         foreach (var position in coordinatePositionMapping.Values)
         {
             if (position.x >= minX && position.x <= maxX
                 && position.y >= minY && position.y <= maxY)
             {
-                index++;
-                positionArray[index] = position;
+                posList.Add(position);
             }
         }
 
-        return positionArray;
+        return posList;
     }
 
-    public Vector2? GetFinalAnchorPositionForItem(float minX, float minY, float maxX, float maxY, int size)
+    public Vector2? GetFinalAnchorPositionForItem(float minX, float minY, float maxX, float maxY)
     {
         float minPosX = float.MaxValue, minPosY = float.MaxValue, maxPosX = float.MinValue, maxPosY = float.MinValue;
 
-        Vector2[] positionArray = GetPosArrayUnderItem(minX, minY, maxX, maxY, size);
+        List<Vector2> positionArray = GetPosArrayUnderItem(minX, minY, maxX, maxY);
+        
+        foreach(var position in positionArray)
+        {
+            Debug.Log(position);
+        }
 
         if (positionArray[0] == Vector2.zero)
             return null;
 
-        for (int i = 0; i < positionArray.Length; i++)
+        foreach (var pos in positionArray)
         {
-            if (IsPosFilled(positionArray[i]))
+            if (IsPosFilled(pos))
             {
-                Debug.Log("Is invalid");
                 return null;
             }
-            if (positionArray[i].x < minPosX)
-                minPosX = positionArray[i].x;
 
-            if (positionArray[i].x > maxPosX)
-                maxPosX = positionArray[i].x;
+            if (pos.x < minPosX)
+                minPosX = pos.x;
 
-            if (positionArray[i].y < minPosY)
-                minPosY = positionArray[i].y;
+            if (pos.x > maxPosX)
+                maxPosX = pos.x;
 
-            if (positionArray[0].y > maxPosY)
-                maxPosY = positionArray[i].y;
+            if (pos.y < minPosY)
+                minPosY = pos.y;
+
+            if (pos.y > maxPosY)
+                maxPosY = pos.y;
 
         }
 

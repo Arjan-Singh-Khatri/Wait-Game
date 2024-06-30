@@ -31489,7 +31489,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 197, y: 63}
-  m_SizeDelta: {x: 160, y: 30}
+  m_SizeDelta: {x: 160, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1376402740
 MonoBehaviour:
@@ -31874,6 +31874,8 @@ MonoBehaviour:
   itemNameText: {fileID: 1931933479}
   itemDescriptionText: {fileID: 1831958023}
   detailPanelItemImage: {fileID: 1721007436}
+  useItemButton: {fileID: 1376402740}
+  discardItemButton: {fileID: 1720500635}
   currentItemType: 0
   currentItem: {fileID: 0}
 --- !u!43 &1554545040
@@ -34039,7 +34041,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: -202, y: 62}
-  m_SizeDelta: {x: 160, y: 30}
+  m_SizeDelta: {x: 160, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1720500635
 MonoBehaviour:

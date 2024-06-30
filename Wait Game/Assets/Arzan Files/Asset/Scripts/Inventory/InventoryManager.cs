@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -19,7 +20,7 @@ public class InventoryManager : MonoBehaviour {
     Vector3 currentPointerWorldPos;
     Vector2 originalPosition;
     Quaternion originalRotation;
-    Vector2[] currentPosArray;
+    List<Vector2> currentPosArray = new();
 
     // Invenotry UI 
     [SerializeField] InventoryUI inventoryUI;
@@ -35,12 +36,12 @@ public class InventoryManager : MonoBehaviour {
         inventoryGrid.CreateGrid();
     }
 
-    private void Update() { 
+    private void Update() {
+
 
         if (inventoryUI.gameObject.activeSelf)
             RectTransformUtility.ScreenPointToWorldPointInRectangle(_inventoryVisualCanvas, Input.mousePosition,
                 null, out currentPointerWorldPos);
-
     }
 
     #region Inventory Item Functions
@@ -50,21 +51,20 @@ public class InventoryManager : MonoBehaviour {
         Vector2? finalAnchorPos = inventoryGrid.GetFinalAnchorPositionToLoadItem(sizeX, sizeY);
 
         if(finalAnchorPos == null) {
-
             // Inventory Full !!
             Debug.Log("Inventory is Full !! Cannot store Item");
             return;
         }
 
         var instantiatedItem = Instantiate(item,finalAnchorPos.Value,Quaternion.identity, _inventoryCanvas.transform);
+        instantiatedItem.anchoredPosition = finalAnchorPos.Value;
         instantiatedItem.gameObject.SetActive(false);
 
-        var posArray = inventoryGrid.GetPosArrayUnderItem( originalPosition.x - (_inventoryCellSize / 2 * sizeX),
-                                                              originalPosition.y - (_inventoryCellSize / 2 * sizeY),
-                                                              originalPosition.x + (_inventoryCellSize / 2 * sizeX),
-                                                              originalPosition.y + (_inventoryCellSize / 2 * sizeY),
-                                                              sizeY + sizeY);
-
+        var posArray = inventoryGrid.GetPosArrayUnderItem( instantiatedItem.anchoredPosition.x - (_inventoryCellSize / 2 * sizeX),
+                                                           instantiatedItem.anchoredPosition.y - (_inventoryCellSize / 2 * sizeY),
+                                                           instantiatedItem.anchoredPosition.x + (_inventoryCellSize / 2 * sizeX),
+                                                           instantiatedItem.anchoredPosition.y + (_inventoryCellSize / 2 * sizeY) );
+        
         foreach (var pos in posArray){
             inventoryGrid.AddInvalidPositionToSet(pos);
         }
@@ -78,9 +78,7 @@ public class InventoryManager : MonoBehaviour {
                                        item.anchoredPosition.x - (_inventoryCellSize / 2 * sizeX),
                                        item.anchoredPosition.y - (_inventoryCellSize / 2 * sizeY),
                                        item.anchoredPosition.x + (_inventoryCellSize / 2 * sizeX),
-                                       item.anchoredPosition.y + (_inventoryCellSize / 2 * sizeY),
-                                       sizeY + sizeY
-                                       );
+                                       item.anchoredPosition.y + (_inventoryCellSize / 2 * sizeY) );
 
 
         if (finalAnchorPosition == null) {
@@ -94,10 +92,9 @@ public class InventoryManager : MonoBehaviour {
             }
 
             return;
-        } 
+        }
 
-
-        item.anchoredPosition = finalAnchorPosition.Value;
+        item.position = finalAnchorPosition.Value;
     }
 
     public void PickUpItem(RectTransform item, int sizeX, int sizeY) {
@@ -108,8 +105,7 @@ public class InventoryManager : MonoBehaviour {
         currentPosArray = inventoryGrid.GetPosArrayUnderItem( originalPosition.x - (_inventoryCellSize / 2 * sizeX),
                                                               originalPosition.y - (_inventoryCellSize / 2 * sizeY),
                                                               originalPosition.x + (_inventoryCellSize / 2 * sizeX),
-                                                              originalPosition.y + (_inventoryCellSize / 2 * sizeY),
-                                                              sizeY + sizeY);
+                                                              originalPosition.y + (_inventoryCellSize / 2 * sizeY) );
 
         foreach (var pos in currentPosArray){
 
@@ -120,24 +116,27 @@ public class InventoryManager : MonoBehaviour {
     // Start Moving When OnDrag
     public void ItemDrag(RectTransform item) {
 
-        item.position = currentPointerWorldPos;
+        item.anchoredPosition = currentPointerWorldPos;
         // Clamp this
     }
 
-    public void DiscardItem(RectTransform item, int sizeX, int sizeY){
+    #endregion
+
+    // Discard item
+    public void DiscardItem(RectTransform item, int sizeX, int sizeY)
+    {
 
         var posArray = inventoryGrid.GetPosArrayUnderItem(originalPosition.x - (_inventoryCellSize / 2 * sizeX),
                                                               originalPosition.y - (_inventoryCellSize / 2 * sizeY),
                                                               originalPosition.x + (_inventoryCellSize / 2 * sizeX),
-                                                              originalPosition.y + (_inventoryCellSize / 2 * sizeY),
-                                                              sizeY + sizeY);
+                                                              originalPosition.y + (_inventoryCellSize / 2 * sizeY) );
 
         foreach (var pos in posArray)
         {
-
             inventoryGrid.RemovePositionFromSet(pos);
         }
+
+        Destroy(item);
     }
-    #endregion
 
 }

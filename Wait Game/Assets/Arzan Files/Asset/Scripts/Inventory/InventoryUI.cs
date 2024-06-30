@@ -26,6 +26,10 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI itemDescriptionText;
     [SerializeField] Image detailPanelItemImage;
 
+    // Buttons 
+    [SerializeField] Button useItemButton;
+    [SerializeField] Button discardItemButton;
+
     private bool isInventoryOpen = false;
 
     // To Check Item
@@ -37,12 +41,21 @@ public class InventoryUI : MonoBehaviour
     public Action onUseItem;
 
     private void Start(){
+
         _closeButton.onClick.AddListener(() =>
         {
-            HideInventory();
+            InventoryToggle();
             HideItemDetail();
         });
-        
+
+        useItemButton.onClick.AddListener(() => {
+            UseItem();
+        });
+
+        discardItemButton.onClick.AddListener(() => { 
+            DiscardItem();
+        });
+    
     }
 
     private void Update()
@@ -59,17 +72,14 @@ public class InventoryUI : MonoBehaviour
 
         foreach(Transform item in inventoryMainCanvas.transform)
         {
-            item.gameObject.SetActive(true);
+            item.gameObject.SetActive(isInventoryOpen);
         }
-    }
-
-    void HideInventory() {
-        inventoryPanel.SetActive(false);
+        HideItemDetail() ;
     }
 
     public void ShowItemDetail(string itemDescripText, string itemName, ItemHandle item, Image itemImage) {
 
-        detailPanelItemImage = itemImage;
+        detailPanelItemImage.sprite = itemImage.sprite;
         itemDetailPanel.SetActive(true);
         itemDescriptionText.text = itemDescripText;
         itemNameText.text = itemName;
@@ -77,7 +87,11 @@ public class InventoryUI : MonoBehaviour
     }
 
     public void HideItemDetail(){
-        itemDetailPanel.SetActive(false) ;   
+
+        if (!inventoryPanel.activeSelf)
+        {
+            itemDetailPanel.SetActive(false);
+        }
     }
 
     public void UseItem(){
