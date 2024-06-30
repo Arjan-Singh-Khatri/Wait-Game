@@ -230,7 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cad7d043977f24f46bc53e4279624a47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxTime: 30
+  maxTime: 10
   refuelRate: 1
   timerSlider: {fileID: 1757623180}
 --- !u!4 &645304321 stripped
