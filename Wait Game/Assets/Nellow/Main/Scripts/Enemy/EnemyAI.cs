@@ -9,7 +9,9 @@ public class EnemyAI : MonoBehaviour
         Patrolling,
         Alerted,
         Chasing,
-        Looking
+        Looking,
+        Stalking,
+        Intimidating
     }
 
     public Transform player;
@@ -21,14 +23,18 @@ public class EnemyAI : MonoBehaviour
     public float patrolRange = 20f;
     public float playerChaseTime = 5f;
     public float alertDuration = 3f;
+    public float stalkingDistance = 15f;
+    public float followDetectionTime = 3f; 
     public State currentState = State.Patrolling;
     public EnemyAnimation enemyAnimation;
     private NavMeshAgent navMeshAgent;
     private bool playerIsLoud = false;
     private float chaseTimer = 0f;
     private float alertTimer = 0f;
+    private float followTimer = 0f;
     private Vector3 lastNoisePosition;
     private Vector3 lastPatrolPosition;
+    private bool playerSeen = false;
 
     void Start()
     {
@@ -50,9 +56,21 @@ public class EnemyAI : MonoBehaviour
                 MoveToRandomPosition();
             }
         }
-        else if (Vector3.Distance(transform.position, player.position) < detectionRadius && HasLineOfSight())
+        else if (currentState != State.Stalking && Vector3.Distance(transform.position, player.position) < detectionRadius && HasLineOfSight())
         {
             TransitionToState(State.Chasing);
+        }
+
+        if (currentState == State.Stalking)
+        {
+            if (IsPlayerSeeingEnemy())
+            {
+                SprintAndHide();
+            }
+            else if (IsPlayerFollowing())
+            {
+                TransitionToState(State.Intimidating);
+            }
         }
     }
 
@@ -72,6 +90,12 @@ public class EnemyAI : MonoBehaviour
             case State.Looking:
                 enemyAnimation.UpdateAnimationState(0);
                 break;
+            case State.Stalking:
+                StalkPlayer();
+                break;
+            case State.Intimidating:
+                IntimidatePlayer();
+                break;
         }
     }
 
@@ -86,6 +110,10 @@ public class EnemyAI : MonoBehaviour
             currentState = newState;
         }
         else if (newState == State.Patrolling && currentState == State.Looking)
+        {
+            currentState = newState;
+        }
+        else if (newState == State.Stalking && currentState != State.Chasing)
         {
             currentState = newState;
         }
@@ -109,6 +137,14 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    public void SetPlayerQuiet(bool isQuiet)
+    {
+        if (isQuiet && currentState != State.Stalking && currentState != State.Chasing)
+        {
+            TransitionToState(State.Stalking);
+        }
+    }
+
     private void Patrol()
     {
         navMeshAgent.speed = normalSpeed;
@@ -127,10 +163,9 @@ public class EnemyAI : MonoBehaviour
         navMeshAgent.SetDestination(lastNoisePosition);
 
         alertTimer += Time.deltaTime;
-        if (alertTimer >= alertDuration || navMeshAgent.remainingDistance <= 0)
+        if (alertTimer >= alertDuration || navMeshAgent.remainingDistance <= 1f)
         {
-            TransitionToState(State.Patrolling);
-            MoveToRandomPosition();
+            StartCoroutine(LookAround());
         }
     }
 
@@ -194,6 +229,32 @@ public class EnemyAI : MonoBehaviour
         MoveToRandomPosition();
     }
 
+    private void StalkPlayer()
+    {
+        navMeshAgent.speed = normalSpeed; 
+        Vector3 directionToPlayer = player.position - transform.position;
+        float desiredDistance = stalkingDistance;
+        Vector3 stalkingPosition = player.position - directionToPlayer.normalized * desiredDistance;
+
+        // Hide behind obstacles if possible
+        if (Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hit, desiredDistance, obstacleLayer))
+        {
+            Vector3 hidingSpot = hit.point + hit.normal * 1.5f;
+            if (NavMesh.SamplePosition(hidingSpot, out NavMeshHit navHit, 1.5f, NavMesh.AllAreas))
+            {
+                stalkingPosition = navHit.position;
+            }
+        }
+
+        navMeshAgent.SetDestination(stalkingPosition);
+        enemyAnimation.UpdateAnimationState(navMeshAgent.velocity.magnitude);
+
+        if (Vector3.Distance(transform.position, player.position) < detectionRadius * 0.3f && HasLineOfSight())
+        {
+            TransitionToState(State.Chasing); 
+        }
+    }
+
     private bool HasLineOfSight()
     {
         Vector3 directionToPlayer = player.position - transform.position;
@@ -202,6 +263,68 @@ public class EnemyAI : MonoBehaviour
             return hit.transform == player;
         }
         return true;
+    }
+
+    private bool IsPlayerSeeingEnemy()
+    {
+        Vector3 toPlayer = player.position - transform.position;
+        float angle = Vector3.Angle(player.forward, toPlayer);
+        if (angle < 90f && Vector3.Distance(player.position, transform.position) < detectionRadius && HasLineOfSight())
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private bool IsPlayerFollowing()
+    {
+        if (Vector3.Distance(transform.position, player.position) < stalkingDistance && HasLineOfSight())
+        {
+            followTimer += Time.deltaTime;
+            if (followTimer >= followDetectionTime)
+            {
+                followTimer = 0f;
+                return true;
+            }
+        }
+        else
+        {
+            followTimer = 0f;
+        }
+        return false;
+    }
+
+    private void SprintAndHide()
+    {
+        navMeshAgent.speed = chaseSpeed;
+        Vector3 hidingSpot = Vector3.zero;
+        if (Physics.Raycast(transform.position, (player.position - transform.position).normalized, out RaycastHit hit, detectionRadius, obstacleLayer))
+        {
+            hidingSpot = hit.point + hit.normal * 2f;
+            if (NavMesh.SamplePosition(hidingSpot, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
+            {
+                hidingSpot = navHit.position;
+            }
+        }
+
+        if (hidingSpot != Vector3.zero)
+        {
+            navMeshAgent.SetDestination(hidingSpot);
+            currentState = State.Stalking;
+            playerSeen = true;
+        }
+    }
+
+    private void IntimidatePlayer()
+    {
+        navMeshAgent.speed = chaseSpeed;
+        navMeshAgent.SetDestination(player.position);
+        enemyAnimation.UpdateAnimationState(navMeshAgent.velocity.magnitude);
+
+        if (Vector3.Distance(transform.position, player.position) > detectionRadius * 1.5f)
+        {
+            TransitionToState(State.Patrolling);
+        }
     }
 
     private void OnDrawGizmosSelected()
@@ -222,6 +345,24 @@ public class EnemyAI : MonoBehaviour
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawLine(transform.position, player.position);
+        }
+
+        if (currentState == State.Stalking)
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(transform.position, navMeshAgent.destination);
+        }
+    }
+
+    private void OnGUI()
+    {
+        if (currentState == State.Stalking)
+        {
+            GUI.Label(new Rect(10, 10, 200, 20), "Enemy is Stalking");
+        }
+        else if (currentState == State.Intimidating)
+        {
+            GUI.Label(new Rect(10, 30, 200, 20), "Enemy is Intimidating");
         }
     }
 }
