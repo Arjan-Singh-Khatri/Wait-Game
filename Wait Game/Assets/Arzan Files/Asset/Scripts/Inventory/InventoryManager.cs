@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class InventoryManager : MonoBehaviour {
@@ -25,6 +26,8 @@ public class InventoryManager : MonoBehaviour {
     // Invenotry UI 
     [SerializeField] InventoryUI inventoryUI;
 
+    [SerializeField] RectTransform mouse;
+
     private void Start() {
 
         _inventoryVisualOrigin.x = _inventoryVisualFront.anchoredPosition.x - _inventoryVisualFront.rect.width / 2;
@@ -40,8 +43,16 @@ public class InventoryManager : MonoBehaviour {
 
 
         if (inventoryUI.gameObject.activeSelf)
+        {
+
             RectTransformUtility.ScreenPointToWorldPointInRectangle(_inventoryVisualCanvas, Input.mousePosition,
                 null, out currentPointerWorldPos);
+            currentPointerWorldPos.x /= _inventoryVisualCanvas.localScale.x;
+            currentPointerWorldPos.y /= _inventoryVisualCanvas.localScale.y;
+            mouse.anchoredPosition = currentPointerWorldPos;
+        }
+
+
     }
 
     #region Inventory Item Functions
@@ -94,7 +105,7 @@ public class InventoryManager : MonoBehaviour {
             return;
         }
 
-        item.position = finalAnchorPosition.Value;
+        item.anchoredPosition = finalAnchorPosition.Value;
     }
 
     public void PickUpItem(RectTransform item, int sizeX, int sizeY) {

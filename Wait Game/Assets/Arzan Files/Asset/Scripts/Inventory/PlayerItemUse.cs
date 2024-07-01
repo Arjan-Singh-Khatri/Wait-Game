@@ -15,7 +15,6 @@ public class PlayerItemUse: MonoBehaviour
         switch(inventoryUI.currentItemType){
             case ItemTypes.key:
                 UseKey();
-                inventoryUI.currentItem.DiscardItem();
                 break;
 
             default:
@@ -34,7 +33,8 @@ public class PlayerItemUse: MonoBehaviour
         {
             if (closestInteractable.TryGetComponent(out DoubleDoorInteractable doubleDoor))
                 doubleDoor.TryKey(inventoryUI.currentItem.itemScriptableObject.itemCode);
-        }else
+        }
+        else
         {
             Debug.Log(" Cannot use item! ");
         }

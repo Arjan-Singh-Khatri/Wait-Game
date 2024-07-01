@@ -50,8 +50,8 @@ public class CursorManager : MonoBehaviour
         }
         else
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Confined;
+            //Cursor.visible = false;
         }
     }
 }
