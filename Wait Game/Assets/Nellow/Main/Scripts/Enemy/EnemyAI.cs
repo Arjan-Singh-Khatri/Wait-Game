@@ -24,7 +24,7 @@ public class EnemyAI : MonoBehaviour
     public float playerChaseTime = 5f;
     public float alertDuration = 3f;
     public float stalkingDistance = 15f;
-    public float followDetectionTime = 3f; 
+    public float followDetectionTime = 3f;
     public State currentState = State.Patrolling;
     public EnemyAnimation enemyAnimation;
     private NavMeshAgent navMeshAgent;
@@ -231,7 +231,7 @@ public class EnemyAI : MonoBehaviour
 
     private void StalkPlayer()
     {
-        navMeshAgent.speed = normalSpeed; 
+        navMeshAgent.speed = normalSpeed;
         Vector3 directionToPlayer = player.position - transform.position;
         float desiredDistance = stalkingDistance;
         Vector3 stalkingPosition = player.position - directionToPlayer.normalized * desiredDistance;
@@ -251,7 +251,7 @@ public class EnemyAI : MonoBehaviour
 
         if (Vector3.Distance(transform.position, player.position) < detectionRadius * 0.3f && HasLineOfSight())
         {
-            TransitionToState(State.Chasing); 
+            TransitionToState(State.Chasing);
         }
     }
 
@@ -350,7 +350,11 @@ public class EnemyAI : MonoBehaviour
         if (currentState == State.Stalking)
         {
             Gizmos.color = Color.magenta;
-            Gizmos.DrawLine(transform.position, navMeshAgent.destination);
+            if (navMeshAgent != null)
+            {
+                Gizmos.DrawLine(transform.position, navMeshAgent.destination);
+            }
+            Gizmos.DrawWireSphere(transform.position, stalkingDistance);
         }
     }
 

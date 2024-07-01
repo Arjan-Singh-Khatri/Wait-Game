@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1293,10 +1293,25 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 645304321}
+    - target: {fileID: 6581781626325111265, guid: 20d9ddb6b224a034b9a06a01f45c19e9,
+        type: 3}
+      propertyPath: patrolRange
+      value: 70.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581781626325111265, guid: 20d9ddb6b224a034b9a06a01f45c19e9,
+        type: 3}
+      propertyPath: currentState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581781626325111265, guid: 20d9ddb6b224a034b9a06a01f45c19e9,
+        type: 3}
+      propertyPath: stalkingDistance
+      value: 30.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6677782339130707465, guid: 20d9ddb6b224a034b9a06a01f45c19e9,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -30.28
+      value: -40.2
       objectReference: {fileID: 0}
     - target: {fileID: 6677782339130707465, guid: 20d9ddb6b224a034b9a06a01f45c19e9,
         type: 3}
@@ -1441,6 +1456,11 @@ PrefabInstance:
       propertyPath: enemyAI
       value: 
       objectReference: {fileID: 919132148709385313}
+    - target: {fileID: 8853240466591562028, guid: 7f8c01a2bffd552439fcee3c953b2bb5,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8853240466591562028, guid: 7f8c01a2bffd552439fcee3c953b2bb5,
         type: 3}
       propertyPath: stalkingPositionThreshold
