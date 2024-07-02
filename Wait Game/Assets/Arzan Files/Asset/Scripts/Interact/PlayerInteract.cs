@@ -17,6 +17,7 @@ public class PlayerInteract : MonoBehaviour
     }
 
     public IInteractable GetInteractable() {
+
         Collider[] colliders = Physics.OverlapSphere(transform.position,overlapSphereRadius,interactableLayer);
         
         Collider closestInteractable = null;

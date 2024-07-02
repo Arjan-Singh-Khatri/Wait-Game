@@ -9,13 +9,10 @@ using UnityEngine;
 public class DoubleDoorInteractable : MonoBehaviour, IInteractable
 {
     // Need to generate Some sort of ID or code for each door and keys with corresponding ID
-    const string interactDoorText = " Door name ";
-    const string requiredKeyID = "default"; 
+    const string interactDoorText = " Toggle Door";
+    [SerializeField] string requiredKeyID ; 
 
-
-    private NavMeshModifierVolume navMeshModifier;
-    private GameObject leftDoorContainer;
-    private GameObject rightDoorContainer;
+    private GameObject doorObject;
 
     public bool isLocked;
     public bool isOpen = false;
@@ -23,16 +20,17 @@ public class DoubleDoorInteractable : MonoBehaviour, IInteractable
     private bool openingDoor = false; 
     private bool closingDoor = false;
 
+    [SerializeField] private float doorRotationAmountOpen;
+    [SerializeField] private float doorRotationAmountClose;
 
     private void Start()
     {
-        navMeshModifier = GetComponent<NavMeshModifierVolume>();
-        leftDoorContainer = transform.GetChild(0).gameObject;
-        rightDoorContainer = transform.GetChild(1).gameObject;
-
-        if (isLocked) navMeshModifier.area = 1;
-        else navMeshModifier.area = 0;
+        if (transform.childCount == 0)
+            doorObject = this.gameObject;
+        else
+            doorObject = transform.GetChild(0).gameObject;
     }
+
     public string GetText(){
         return interactDoorText;
     }
@@ -61,31 +59,25 @@ public class DoubleDoorInteractable : MonoBehaviour, IInteractable
             closingDoor = true;
     }
 
-    void CloseDoor() {
-        leftDoorContainer.transform.rotation = Quaternion.Slerp(Quaternion.identity,
+    public void CloseDoor() {
+        doorObject.transform.rotation = Quaternion.Slerp(Quaternion.identity,
             Quaternion.Euler(0, 0, 0), 1 * Time.deltaTime);
 
-        rightDoorContainer.transform.rotation = Quaternion.Slerp(Quaternion.identity,
-            Quaternion.Euler(0, 180, 0), 1 * Time.deltaTime);
-
         // Checking when to stop 
-        if (leftDoorContainer.transform.rotation.eulerAngles.y <= -90){
+        if (doorObject.transform.rotation.eulerAngles.y <= -90){
             closingDoor = false;
             isOpen = false;
         }
 
     }
 
-    void OpenDoor(){
+    public void OpenDoor(){
 
-        leftDoorContainer.transform.rotation = Quaternion.Slerp(Quaternion.identity,
-            Quaternion.Euler(0, -90, 0), 1 * Time.deltaTime);
-
-        rightDoorContainer.transform.rotation = Quaternion.Slerp(Quaternion.identity,
-            Quaternion.Euler(0, 270, 0), 1 * Time.deltaTime);
+        doorObject.transform.rotation = Quaternion.Slerp(Quaternion.identity,
+            Quaternion.Euler(0, doorRotationAmountOpen, 0), 1 * Time.deltaTime);
 
         // Checking when to stop 
-        if (leftDoorContainer.transform.rotation.eulerAngles.y <= -90)
+        if (doorObject.transform.rotation.eulerAngles.y <= -90)
         {
             openingDoor = false;
             isOpen = true;
@@ -94,6 +86,7 @@ public class DoubleDoorInteractable : MonoBehaviour, IInteractable
     }
 
     public void TryKey(string key) { 
+
         if(requiredKeyID == key)
         {
             // Some Ui
