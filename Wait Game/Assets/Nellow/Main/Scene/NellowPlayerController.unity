@@ -910,6 +910,9 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 128
+  lightLayer:
+    serializedVersion: 2
+    m_Bits: 0
   normalSpeed: 2
   alertSpeed: 4
   chaseSpeed: 6
@@ -921,6 +924,7 @@ MonoBehaviour:
   followDetectionTime: 3
   currentState: 0
   enemyAnimation: {fileID: 0}
+  scaredOfLight: 1
 --- !u!195 &1296380935
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1023,7 +1027,7 @@ GameObject:
   - component: {fileID: 1647764868}
   - component: {fileID: 1647764867}
   - component: {fileID: 1647764866}
-  m_Layer: 7
+  m_Layer: 9
   m_Name: Walls (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1601,6 +1605,11 @@ PrefabInstance:
         type: 3}
       propertyPath: stalkingDistance
       value: 30.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581781626325111265, guid: 20d9ddb6b224a034b9a06a01f45c19e9,
+        type: 3}
+      propertyPath: lightLayer.m_Bits
+      value: 512
       objectReference: {fileID: 0}
     - target: {fileID: 6677782339130707465, guid: 20d9ddb6b224a034b9a06a01f45c19e9,
         type: 3}
