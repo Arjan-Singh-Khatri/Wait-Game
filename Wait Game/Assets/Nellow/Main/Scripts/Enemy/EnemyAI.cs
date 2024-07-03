@@ -16,6 +16,7 @@ public class EnemyAI : MonoBehaviour
 
     public Transform player;
     public LayerMask obstacleLayer;
+    public LayerMask lightLayer;
     public float normalSpeed = 2f;
     public float alertSpeed = 4f;
     public float chaseSpeed = 6f;
@@ -27,6 +28,7 @@ public class EnemyAI : MonoBehaviour
     public float followDetectionTime = 3f;
     public State currentState = State.Patrolling;
     public EnemyAnimation enemyAnimation;
+    public bool scaredOfLight = true;
     private NavMeshAgent navMeshAgent;
     private bool playerIsLoud = false;
     private float chaseTimer = 0f;
@@ -172,7 +174,12 @@ public class EnemyAI : MonoBehaviour
     private void ChasePlayer()
     {
         navMeshAgent.speed = chaseSpeed;
-        navMeshAgent.SetDestination(player.position);
+        Vector3 destination = player.position;
+        if (scaredOfLight && IsLightSourceNearby(destination))
+        {
+            destination = GetNearestSafePosition();
+        }
+        navMeshAgent.SetDestination(destination);
         enemyAnimation.UpdateAnimationState(navMeshAgent.velocity.magnitude);
     }
 
@@ -236,7 +243,6 @@ public class EnemyAI : MonoBehaviour
         float desiredDistance = stalkingDistance;
         Vector3 stalkingPosition = player.position - directionToPlayer.normalized * desiredDistance;
 
-        // Hide behind obstacles if possible
         if (Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hit, desiredDistance, obstacleLayer))
         {
             Vector3 hidingSpot = hit.point + hit.normal * 1.5f;
@@ -244,6 +250,11 @@ public class EnemyAI : MonoBehaviour
             {
                 stalkingPosition = navHit.position;
             }
+        }
+
+        if (scaredOfLight && IsLightSourceNearby(stalkingPosition))
+        {
+            stalkingPosition = GetNearestSafePosition();
         }
 
         navMeshAgent.SetDestination(stalkingPosition);
@@ -368,5 +379,31 @@ public class EnemyAI : MonoBehaviour
         {
             GUI.Label(new Rect(10, 30, 200, 20), "Enemy is Intimidating");
         }
+    }
+
+    private bool IsLightSourceNearby(Vector3 position)
+    {
+        Collider[] lightSources = Physics.OverlapSphere(position, detectionRadius, lightLayer);
+        return lightSources.Length > 0;
+    }
+
+    private Vector3 GetNearestSafePosition()
+    {
+        Vector3 safePosition = transform.position;
+        float maxDistance = detectionRadius * 2f;
+        for (int i = 0; i < 36; i++)
+        {
+            Vector3 direction = Quaternion.Euler(0, i * 10, 0) * Vector3.forward;
+            Vector3 potentialPosition = transform.position + direction * maxDistance;
+            if (NavMesh.SamplePosition(potentialPosition, out NavMeshHit hit, maxDistance, NavMesh.AllAreas))
+            {
+                if (!IsLightSourceNearby(hit.position))
+                {
+                    safePosition = hit.position;
+                    break;
+                }
+            }
+        }
+        return safePosition;
     }
 }
