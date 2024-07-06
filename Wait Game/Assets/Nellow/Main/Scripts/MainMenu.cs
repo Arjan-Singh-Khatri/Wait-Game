@@ -7,10 +7,15 @@ public class MainMenu : MonoBehaviour
 {
     public TMPro.TMP_Dropdown qualityDropdown;
     public GameObject loadingScreen;
-    public Image loadingFillImage; //
+    public Image loadingFillImage; 
+    public bool isMenu = true;
 
     void Start()
     {
+        if(!isMenu)
+        {
+            return;
+        }
         PopulateQualityDropdown();
         qualityDropdown.onValueChanged.AddListener(delegate { SetQualityLevel(); });
         loadingScreen.SetActive(false);
@@ -23,7 +28,10 @@ public class MainMenu : MonoBehaviour
 
     IEnumerator LoadYourAsyncScene(string sceneName)
     {
-        loadingScreen.SetActive(true);
+       if(isMenu)
+       {
+         loadingScreen.SetActive(true);
+       }
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         asyncLoad.allowSceneActivation = false;
         
