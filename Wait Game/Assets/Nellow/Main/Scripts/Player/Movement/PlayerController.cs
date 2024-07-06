@@ -24,6 +24,12 @@ public class PlayerController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
+    private void Update()
+    {
+        // Update footstep timer
+        footstepTimer += Time.deltaTime;
+    }
+
     public void Move(float horizontal, float vertical)
     {
         if (TimeManager.Instance == null)
@@ -49,15 +55,11 @@ public class PlayerController : MonoBehaviour
                 TimeManager.Instance.UseTime(1f * Time.deltaTime);
             }
 
-            // Check if the player is moving and play footstep sounds
-            if (movement.magnitude > 0.1f) // Adjust the threshold as necessary
+            // Play footstep sound
+            if (movement.magnitude > 0 && footstepTimer >= footstepInterval)
             {
-                footstepTimer -= Time.deltaTime;
-                if (footstepTimer <= 0f)
-                {
-                    PlayFootstepSound();
-                    footstepTimer = footstepInterval;
-                }
+                PlayFootstepSound();
+                footstepTimer = 0f; // Reset the footstep timer
             }
         }
     }
@@ -66,7 +68,6 @@ public class PlayerController : MonoBehaviour
     {
         if (footstepSounds.Length == 0)
         {
-            Debug.LogWarning("No footstep sounds assigned.");
             return;
         }
 

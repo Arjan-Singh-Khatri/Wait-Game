@@ -366,7 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cad7d043977f24f46bc53e4279624a47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxTime: 269.77
+  maxTime: 10
   refuelRate: 1
   timerSlider: {fileID: 1757623180}
 --- !u!4 &645304321 stripped
@@ -1481,6 +1481,11 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3105323194353880653, guid: 7f8c01a2bffd552439fcee3c953b2bb5,
+        type: 3}
+      propertyPath: m_Volume
+      value: 0.286
+      objectReference: {fileID: 0}
     - target: {fileID: 5172433653114549647, guid: 7f8c01a2bffd552439fcee3c953b2bb5,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -1555,6 +1560,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: WholePlayer
+      objectReference: {fileID: 0}
+    - target: {fileID: 6915855658451120449, guid: 7f8c01a2bffd552439fcee3c953b2bb5,
+        type: 3}
+      propertyPath: footstepInterval
+      value: 0.58
       objectReference: {fileID: 0}
     - target: {fileID: 6915855658451120449, guid: 7f8c01a2bffd552439fcee3c953b2bb5,
         type: 3}
