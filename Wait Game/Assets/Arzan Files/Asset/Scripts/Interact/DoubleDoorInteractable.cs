@@ -1,3 +1,4 @@
+using SinglePlayer;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
@@ -23,12 +24,23 @@ public class DoubleDoorInteractable : MonoBehaviour, IInteractable
     [SerializeField] private float doorRotationAmountOpen;
     [SerializeField] private float doorRotationAmountClose;
 
+    private NavMeshModifierVolume navMeshModifier;
+
     private void Start()
     {
+        navMeshModifier = GetComponent<NavMeshModifierVolume>();  
+
         if (transform.childCount == 0)
             doorObject = this.gameObject;
         else
             doorObject = transform.GetChild(0).gameObject;
+
+        navMeshModifier.enabled = true;
+
+        if (isLocked)
+            navMeshModifier.area = 1;
+        else 
+            navMeshModifier.area = 0;
     }
 
     public string GetText(){
@@ -50,7 +62,10 @@ public class DoubleDoorInteractable : MonoBehaviour, IInteractable
 
     public void Interact(){
 
-        if (isLocked) return;
+        if (isLocked){
+            InfoText.instance.SetContent("Door locked cannot open. !");
+            return;
+        }
 
         if (isOpen) 
             openingDoor = true;
@@ -68,7 +83,7 @@ public class DoubleDoorInteractable : MonoBehaviour, IInteractable
             closingDoor = false;
             isOpen = false;
         }
-
+        navMeshModifier.area = 1;
     }
 
     public void OpenDoor(){
@@ -82,7 +97,7 @@ public class DoubleDoorInteractable : MonoBehaviour, IInteractable
             openingDoor = false;
             isOpen = true;
         }
-
+        navMeshModifier.area = 0;
     }
 
     public void TryKey(string key) { 
@@ -95,7 +110,7 @@ public class DoubleDoorInteractable : MonoBehaviour, IInteractable
         }else
         {
             // Some Ui
-            Debug.Log("Key doesn't match the door!");
+            InfoText.instance.SetContent("Wrong key used. !");
         }
     }
 

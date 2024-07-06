@@ -707,6 +707,7 @@ MonoBehaviour:
   currentState: 0
   enemyAnimation: {fileID: 0}
   scaredOfLight: 1
+  _activated: 0
 --- !u!195 &1296380935
 NavMeshAgent:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using SinglePlayer;
 using System;
 using UnityEngine;
 
@@ -36,7 +37,7 @@ public class PlayerItemUse: MonoBehaviour
         }
         else
         {
-            Debug.Log(" Cannot use item! ");
+            InfoText.instance.SetContent("Cannot use this item here !");
         }
 
     }

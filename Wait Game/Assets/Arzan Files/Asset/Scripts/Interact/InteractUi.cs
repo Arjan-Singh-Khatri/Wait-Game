@@ -1,3 +1,4 @@
+using SinglePlayer;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -9,8 +10,6 @@ public class InteractUi : MonoBehaviour
     [SerializeField] GameObject interactUIPanel;
     [SerializeField] TextMeshProUGUI interactUiTextMesh;
     [SerializeField] Camera playerCamera;
-
-    [SerializeField] Vector3 offset = new(0,0-1);
 
     private void Update(){
 
@@ -28,8 +27,7 @@ public class InteractUi : MonoBehaviour
         ////Interaction Panel position and rotation 
         //interactUIPanel.transform.SetPositionAndRotation(playerCamera.transform.position + offset, 
         //    Quaternion.LookRotation(-interactable.GetTransform().forward));
-
-        interactUiTextMesh.text = interactable.GetText();
+        InfoText.instance.SetContent( interactable.GetText() );
         playerInteract.canInteract = true;
     }
 

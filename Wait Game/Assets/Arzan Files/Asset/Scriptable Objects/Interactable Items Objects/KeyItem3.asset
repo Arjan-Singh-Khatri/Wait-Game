@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: KeyItem3
+  m_EditorClassIdentifier: Assembly-CSharp::ItemAttributes
+  itemVisualPrefab: {fileID: 2475402659728021866, guid: 0929b94da752c3548b3a35db2f1c4bba,
+    type: 3}
+  _sizeX: 1
+  _sizeY: 1
+  _name: FinalDoorKey
+  _description: Opens the final door of the area.
+  itemCode: Final
+  itemInteractText: Pick Up
+  itemType: 1
