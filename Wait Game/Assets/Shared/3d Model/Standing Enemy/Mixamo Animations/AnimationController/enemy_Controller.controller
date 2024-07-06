@@ -127,7 +127,7 @@ AnimatorController:
     m_Controller: {fileID: 9100000}
   - m_Name: FLOAT
     m_Type: 1
-    m_DefaultFloat: 3
+    m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
@@ -158,7 +158,7 @@ AnimatorStateMachine:
     m_Position: {x: 20, y: 320, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -7113733445542484276}
-    m_Position: {x: 200, y: 190, z: 0}
+    m_Position: {x: 220, y: 240, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []

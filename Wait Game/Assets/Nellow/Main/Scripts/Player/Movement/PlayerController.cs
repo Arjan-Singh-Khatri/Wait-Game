@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 7f;
+    [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float gravity = -9.81f;
 
     private Rigidbody rb;

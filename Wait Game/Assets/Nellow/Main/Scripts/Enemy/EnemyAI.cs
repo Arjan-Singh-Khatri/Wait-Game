@@ -37,25 +37,15 @@ public class EnemyAI : MonoBehaviour
     private Vector3 lastNoisePosition;
     private Vector3 lastPatrolPosition;
     private bool playerSeen = false;
-    public bool _activated = false;
 
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
-        
-        //MoveToRandomPosition();
-    }
-
-    public void Activate() { 
         MoveToRandomPosition();
-        _activated = true;
     }
 
     void Update()
     {
-
-        if (!_activated) return; 
-
         HandleState();
 
         if (currentState == State.Chasing)
