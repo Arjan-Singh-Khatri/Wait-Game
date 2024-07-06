@@ -26,8 +26,7 @@ public class InventoryManager : MonoBehaviour {
     // Invenotry UI 
     [SerializeField] InventoryUI inventoryUI;
 
-    [SerializeField] RectTransform mouse;
-
+    [SerializeField] GameObject mouseIcon;
     private void Start() {
 
         _inventoryVisualOrigin.x = _inventoryVisualFront.anchoredPosition.x - _inventoryVisualFront.rect.width / 2;
@@ -44,12 +43,15 @@ public class InventoryManager : MonoBehaviour {
 
         if (inventoryUI.gameObject.activeSelf)
         {
-
+            mouseIcon.SetActive(true);
             RectTransformUtility.ScreenPointToWorldPointInRectangle(_inventoryVisualCanvas, Input.mousePosition,
                 null, out currentPointerWorldPos);
             currentPointerWorldPos.x /= _inventoryVisualCanvas.localScale.x;
             currentPointerWorldPos.y /= _inventoryVisualCanvas.localScale.y;
-            mouse.anchoredPosition = currentPointerWorldPos;
+            mouseIcon.transform.position = Input.mousePosition;
+        }else
+        {
+            mouseIcon.SetActive(false);
         }
 
 

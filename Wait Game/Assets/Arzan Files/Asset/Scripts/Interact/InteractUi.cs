@@ -1,3 +1,4 @@
+using SinglePlayer;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -12,6 +13,12 @@ public class InteractUi : MonoBehaviour
 
     [SerializeField] Vector3 offset = new(0,0-1);
 
+    [SerializeField] InfoText infoText;
+
+    private void Start()
+    {
+
+    }
     private void Update(){
 
         if (playerInteract.GetInteractable() != null){
@@ -21,20 +28,22 @@ public class InteractUi : MonoBehaviour
             Hide();
     }
 
-    void Show(IInteractable interactable) { 
+    void Show(IInteractable interactable) {
 
-        interactUIPanel.SetActive(true);
+        //interactUIPanel.SetActive(true);
 
         ////Interaction Panel position and rotation 
         //interactUIPanel.transform.SetPositionAndRotation(playerCamera.transform.position + offset, 
         //    Quaternion.LookRotation(-interactable.GetTransform().forward));
 
-        interactUiTextMesh.text = interactable.GetText();
+        //interactUiTextMesh.text = interactable.GetText();
+        infoText.SetInteractText(interactable.GetText());
+
         playerInteract.canInteract = true;
     }
 
     void Hide() {
-        interactUIPanel.SetActive(false);
+        infoText.SetInteractTextOff() ;
         playerInteract.canInteract = false;
     }
 }

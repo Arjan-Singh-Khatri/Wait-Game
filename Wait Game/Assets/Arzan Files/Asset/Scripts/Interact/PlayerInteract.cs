@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using UnityEngine;
 
 public class PlayerInteract : MonoBehaviour
@@ -14,6 +15,7 @@ public class PlayerInteract : MonoBehaviour
         {
             Interact();
         }
+
     }
 
     public IInteractable GetInteractable() {
@@ -23,14 +25,17 @@ public class PlayerInteract : MonoBehaviour
         Collider closestInteractable = null;
 
         foreach(Collider collider in colliders) {
+            
             if(closestInteractable == null) closestInteractable = collider; 
+            
             if(Vector3.Distance(collider.transform.position, transform.position) <
                 Vector3.Distance(closestInteractable.transform.position, transform.position)) {
                 closestInteractable = collider;
             }
         }
 
-        if(closestInteractable != null) { 
+        if(closestInteractable != null) {
+
             if (closestInteractable.TryGetComponent(out IInteractable interactable))
                 return interactable;
         }
@@ -41,9 +46,11 @@ public class PlayerInteract : MonoBehaviour
     private void Interact() { 
 
         if(canInteract){
+
             IInteractable interactable = GetInteractable();
             interactable.Interact();
         }
+
     }
 
     private void OnDrawGizmos(){

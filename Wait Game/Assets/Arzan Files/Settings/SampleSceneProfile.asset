@@ -40,16 +40,16 @@ MonoBehaviour:
   active: 1
   color:
     m_OverrideState: 1
-    m_Value: {r: 0.2830189, g: 0.027233887, b: 0.04610328, a: 1}
+    m_Value: {r: 0.335849, g: 0.066062674, b: 0.042456374, a: 1}
   center:
     m_OverrideState: 1
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.437
+    m_Value: 0.37
   smoothness:
     m_OverrideState: 1
-    m_Value: 0.567
+    m_Value: 0.74
   rounded:
     m_OverrideState: 0
     m_Value: 0
@@ -85,7 +85,7 @@ MonoBehaviour:
   active: 1
   mode:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 2
   neutralHDRRangeReductionMode:
     m_OverrideState: 0
     m_Value: 2
@@ -125,13 +125,13 @@ MonoBehaviour:
   active: 1
   type:
     m_OverrideState: 1
-    m_Value: 8
+    m_Value: 2
   intensity:
     m_OverrideState: 1
-    m_Value: 0.751
+    m_Value: 0.83
   response:
     m_OverrideState: 1
-    m_Value: 0.288
+    m_Value: 0
   texture:
     m_OverrideState: 0
     m_Value: {fileID: 0}

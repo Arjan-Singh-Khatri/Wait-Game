@@ -1,3 +1,4 @@
+using SinglePlayer;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
@@ -8,8 +9,8 @@ using UnityEngine;
 
 public class DoubleDoorInteractable : MonoBehaviour, IInteractable
 {
-    // Need to generate Some sort of ID or code for each door and keys with corresponding ID
-    const string interactDoorText = " Toggle Door";
+    // Need to generate Some sort of ID or code for each door and keys with corresponding ID 
+    const string interactDoorText = " Toggle Door ";
     [SerializeField] string requiredKeyID ; 
 
     private GameObject doorObject;
@@ -23,12 +24,18 @@ public class DoubleDoorInteractable : MonoBehaviour, IInteractable
     [SerializeField] private float doorRotationAmountOpen;
     [SerializeField] private float doorRotationAmountClose;
 
+    NavMeshModifierVolume navMeshModifier;
+
+    [SerializeField] InfoText interactiveText;
+
     private void Start()
     {
-        if (transform.childCount == 0)
-            doorObject = this.gameObject;
-        else
-            doorObject = transform.GetChild(0).gameObject;
+        doorObject = transform.GetChild(0).gameObject;
+        
+        navMeshModifier = GetComponent<NavMeshModifierVolume>();
+
+        if (isLocked) navMeshModifier.area = 1; 
+        else navMeshModifier.area = 0;
     }
 
     public string GetText(){
@@ -39,62 +46,43 @@ public class DoubleDoorInteractable : MonoBehaviour, IInteractable
         return transform;
     }
 
-    private void Update(){
-        
-        if (openingDoor )
-            OpenDoor();
-        else if (closingDoor)
-            CloseDoor();
-            
-    }
 
     public void Interact(){
 
-        if (isLocked) return;
+        if (isLocked){
+            interactiveText.SetContent("Door is locked can't open!");
 
-        if (isOpen) 
-            openingDoor = true;
+            return;
+        }
 
+        if (!isOpen) { 
+            OpenDoor();
+        }
         else
-            closingDoor = true;
+            CloseDoor();
     }
 
     public void CloseDoor() {
-        doorObject.transform.rotation = Quaternion.Slerp(Quaternion.identity,
-            Quaternion.Euler(0, 0, 0), 1 * Time.deltaTime);
+        doorObject.transform.rotation = Quaternion.Euler(0, 0, 0);
 
-        // Checking when to stop 
-        if (doorObject.transform.rotation.eulerAngles.y <= -90){
-            closingDoor = false;
-            isOpen = false;
-        }
-
+        navMeshModifier.area = 1;
     }
 
     public void OpenDoor(){
 
-        doorObject.transform.rotation = Quaternion.Slerp(Quaternion.identity,
-            Quaternion.Euler(0, doorRotationAmountOpen, 0), 1 * Time.deltaTime);
+        doorObject.transform.rotation = Quaternion.Euler(0, doorRotationAmountOpen + doorObject.transform.rotation.y, 0);
 
-        // Checking when to stop 
-        if (doorObject.transform.rotation.eulerAngles.y <= -90)
-        {
-            openingDoor = false;
-            isOpen = true;
-        }
-
+        navMeshModifier.area = 0;
     }
 
     public void TryKey(string key) { 
 
         if(requiredKeyID == key)
         {
-            // Some Ui
-            // Sound maybe then call this with some delay
             OpenDoor();
         }else
         {
-            // Some Ui
+            interactiveText.SetContent(" Key doesn't match the door! ");
             Debug.Log("Key doesn't match the door!");
         }
     }

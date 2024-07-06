@@ -1,3 +1,4 @@
+using SinglePlayer;
 using System;
 using UnityEngine;
 
@@ -5,6 +6,8 @@ using UnityEngine;
 public class PlayerItemUse: MonoBehaviour 
 {
     [SerializeField] InventoryUI inventoryUI;
+
+    [SerializeField] InfoText warningText; 
 
     private void Start(){
         inventoryUI.onUseItem += UseItem;
@@ -36,7 +39,8 @@ public class PlayerItemUse: MonoBehaviour
         }
         else
         {
-            Debug.Log(" Cannot use item! ");
+            warningText.SetContent(" Cannot use item in current Context! ");
+            Debug.Log(" Cannot use item in current Context! ");
         }
 
     }

@@ -369,17 +369,6 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void OnGUI()
-    {
-        if (currentState == State.Stalking)
-        {
-            GUI.Label(new Rect(10, 10, 200, 20), "Enemy is Stalking");
-        }
-        else if (currentState == State.Intimidating)
-        {
-            GUI.Label(new Rect(10, 30, 200, 20), "Enemy is Intimidating");
-        }
-    }
 
     private bool IsLightSourceNearby(Vector3 position)
     {
